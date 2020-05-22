@@ -18,7 +18,7 @@ class ClientConnector {
     private:
         const char *hostname;
         const char *servicename;
-        SocketTCP &clSocket;
+        SocketTCP clSocket;
 
     public:
         ClientConnector(const char *aHostname, const char *aServicename);
@@ -49,7 +49,7 @@ ClientConnector::ClientConnector(const char *aHostname,
         try {
             SocketTCP aClSocket;
             aClSocket.connectTCP(addr_ptr->ai_addr, addr_ptr->ai_addrlen);
-            this->clSocket = aClSocket;
+            this->clSocket = std::move(aClSocket);
             break;
         } catch(const std::exception& e) {
             std::cerr << e.what() << '\n';

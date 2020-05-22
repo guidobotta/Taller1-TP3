@@ -13,7 +13,7 @@
 class ServerManager {
     private:
         const char *servicename;
-        SocketTCP &blSocket;
+        SocketTCP blSocket;
         //SocketTCP peerSockets;
 
     public:

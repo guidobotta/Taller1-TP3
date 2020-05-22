@@ -29,7 +29,7 @@ ServerManager::ServerManager(const char *aServicename) : servicename(aServicenam
             SocketTCP aBlSocket;
             aBlSocket.bindTCP(addr_ptr->ai_addr, addr_ptr->ai_addrlen);
             aBlSocket.listenTCP(LISTEN_SOCKETS);
-            this->blSocket = aBlSocket;
+            this->blSocket = std::move(aBlSocket);
             break;
         } catch(const std::exception& e) {
             std::cerr << e.what() << '\n';
@@ -42,10 +42,11 @@ ServerManager::ServerManager(const char *aServicename) : servicename(aServicenam
     }
 
     freeaddrinfo(results);
-
-    //HACER EL ACCEPT AFUERA PARA CADA HILO PARTICULAR
-    socket_accept(&(self->blsocket), addr_ptr->ai_addr, &(addr_ptr->ai_addrlen), &(self->peersocket));
 }
+
+/*
+    HACER EL ACCEPT DE LOS SOCKETS PARA CREAR SOCKER PEER
+*/
 
 ServerManager::~ServerManager() {
     //CERRAR SOCKETS
