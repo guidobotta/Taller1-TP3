@@ -4,22 +4,22 @@
 #include <string>
 #include <iostream>
 #include "common_app_error.h"
+#include "client_connector.h"
 
-class ClientController
-{
-private:
-    const char *hostname;
-    const char *service;
-    bool ended;
-    static void checkLine(std::string &line);
+class ClientController {
+    private:
+        ClientConnector &connector;
+        bool ended;
+        int checkLine(std::string &line);
+        void sendLine(std::string &line);
+        void receiveResult(char** result);
 
-public:
-    ClientController(int paramAmount, const char *aHostname, 
-                    const char *aService);
-    ClientController(const ClientController &other) = delete;
-    ~ClientController() noexcept;
-    void run();
-    bool end();
+    public:
+        ClientController(ClientConnector &aConnector);
+        ClientController(const ClientController &other) = delete;
+        ~ClientController() noexcept;
+        void run();
+        bool end();
 };
 
 #endif

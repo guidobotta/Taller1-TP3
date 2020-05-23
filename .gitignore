@@ -2,3 +2,5 @@ Makefile
 client
 numeros
 prueba.cpp
+a.out
+server

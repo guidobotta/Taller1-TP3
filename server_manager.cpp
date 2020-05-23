@@ -42,6 +42,8 @@ ServerManager::ServerManager(const char *aServicename) : servicename(aServicenam
     }
 
     freeaddrinfo(results);
+
+    this->blSocket.acceptTCP(addr_ptr->ai_addr, &addr_ptr->ai_addrlen);
 }
 
 /*

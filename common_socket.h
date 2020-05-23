@@ -15,13 +15,15 @@ class SocketTCP {
     public:
         SocketTCP();
         SocketTCP(const SocketTCP &other) = delete;
+        SocketTCP(SocketTCP&& other);
         ~SocketTCP();
+        SocketTCP& operator=(SocketTCP&& other);
         void bindTCP(const struct sockaddr *address, socklen_t &address_len);
         void listenTCP(int backlog);
         SocketTCP acceptTCP(struct sockaddr *address, socklen_t *address_len);
         void connectTCP(const struct sockaddr *address, socklen_t &address_len);
-        size_t sendTCP(const char *buffer, size_t &length, int flags);
-        size_t receiveTCP(char *buffer, size_t &length, int flags);
+        size_t sendTCP(const char *buffer, size_t length, int flags);
+        size_t receiveTCP(char *buffer, size_t length, int flags);
         void shutdownTCP(int how);
 };
 
