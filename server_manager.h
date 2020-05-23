@@ -2,6 +2,7 @@
 #define __SERVER_MANAGER_H__
 
 #include "common_socket.h"
+#include <netdb.h>
 
 #define LISTEN_SOCKETS 10
 
@@ -13,11 +14,13 @@
 class ServerManager {
     private:
         const char *servicename;
+        struct addrinfo hints;
+        struct addrinfo *results;
         SocketTCP blSocket;
         //SocketTCP peerSockets;
 
     public:
-        ServerManager(const char *aServicename);
+        explicit ServerManager(const char *aServicename);
         ~ServerManager();
 };
 

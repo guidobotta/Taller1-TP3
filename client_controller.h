@@ -15,7 +15,7 @@ class ClientController {
         void receiveResult(char** result);
 
     public:
-        ClientController(ClientConnector &aConnector);
+        explicit ClientController(ClientConnector &aConnector);
         ClientController(const ClientController &other) = delete;
         ~ClientController() noexcept;
         void run();

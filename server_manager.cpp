@@ -6,25 +6,25 @@
 #include <string.h>
 #include <iostream>
 
-ServerManager::ServerManager(const char *aServicename) : servicename(aServicename) {
+ServerManager::ServerManager(const char *aServicename) : 
+                                                    servicename(aServicename) {
     int status;
-    struct addrinfo hints;
-    struct addrinfo *results;
     struct addrinfo *addr_ptr;
 
-    memset(&hints, 0, sizeof(struct addrinfo));
-    hints.ai_family = AF_INET;       // IPv4
-    hints.ai_socktype = SOCK_STREAM; // TCP
-    hints.ai_flags = AI_PASSIVE;     // For bind
+    memset(&this->hints, 0, sizeof(struct addrinfo));
+    this->hints.ai_family = AF_INET;       // IPv4
+    this->hints.ai_socktype = SOCK_STREAM; // TCP
+    this->hints.ai_flags = AI_PASSIVE;     // For bind
 
-    status = getaddrinfo(0, this->servicename, &hints, &results);
+    status = getaddrinfo(0, this->servicename, &this->hints, &this->results);
 
     if (status != 0) {
         throw AppError("Error: fallo al levantar servidor en getaddrinfo");
     }
 
     // Recorro resultados de getaddrinfo
-    for (addr_ptr = results; addr_ptr != NULL; addr_ptr = addr_ptr->ai_next) {
+    for (addr_ptr = this->results; addr_ptr != NULL; 
+        addr_ptr = addr_ptr->ai_next) {
         try {
             SocketTCP aBlSocket;
             aBlSocket.bindTCP(addr_ptr->ai_addr, addr_ptr->ai_addrlen);
@@ -37,19 +37,12 @@ ServerManager::ServerManager(const char *aServicename) : servicename(aServicenam
     }
     
     if (addr_ptr == NULL){
-        freeaddrinfo(results);
+        freeaddrinfo(this->results);
         throw AppError("Error: fallo al levantar servidor en bind");
     }
-
-    freeaddrinfo(results);
-
-    this->blSocket.acceptTCP(addr_ptr->ai_addr, &addr_ptr->ai_addrlen);
 }
 
-/*
-    HACER EL ACCEPT DE LOS SOCKETS PARA CREAR SOCKER PEER
-*/
-
 ServerManager::~ServerManager() {
-    //CERRAR SOCKETS
+    freeaddrinfo(results);
+    this->blSocket.shutdownTCP(SHUT_RDWR);
 }

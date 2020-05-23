@@ -61,8 +61,9 @@ void ClientController::receiveResult(char** result) {
     strTam >> tam;
     tam = ntohs(tam);
     
-    char *msg = (char*) malloc(tam * sizeof(char));
+    char *msg = (char*) malloc((tam + 1) * sizeof(char));
     this->connector.rcvMsg(msg, tam);
+    msg[tam] = '\0';
 
     (*result) = msg;
     /*CAMBIAR IMPLEMENTACION DAR ORIENTACION A OBJETOS ENCAPSULAR MALLOC*/

@@ -14,7 +14,7 @@ class RoundList {
         static void checkString(std::string &line);
         
     public:
-        RoundList(FileReader &numFile);
+        explicit RoundList(FileReader &numFile);
         RoundList(const RoundList &other) = delete;
         uint16_t getNext();
         ~RoundList();
