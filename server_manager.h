@@ -14,14 +14,17 @@
 class ServerManager {
     private:
         const char *servicename;
+        bool closed;
         struct addrinfo hints;
         struct addrinfo *results;
+        struct addrinfo *addr_ptr;
         SocketTCP blSocket;
-        //SocketTCP peerSockets;
 
     public:
         explicit ServerManager(const char *aServicename);
         ~ServerManager();
+        SocketTCP connect();
+        void closeSocket();
 };
 
 #endif

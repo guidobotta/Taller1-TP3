@@ -7,9 +7,9 @@
 #include <iostream>
 
 ServerManager::ServerManager(const char *aServicename) : 
-                                                    servicename(aServicename) {
+                                                    servicename(aServicename),
+                                                    closed(false) {
     int status;
-    struct addrinfo *addr_ptr;
 
     memset(&this->hints, 0, sizeof(struct addrinfo));
     this->hints.ai_family = AF_INET;       // IPv4
@@ -23,11 +23,11 @@ ServerManager::ServerManager(const char *aServicename) :
     }
 
     // Recorro resultados de getaddrinfo
-    for (addr_ptr = this->results; addr_ptr != NULL; 
-        addr_ptr = addr_ptr->ai_next) {
+    for (this->addr_ptr = this->results; this->addr_ptr != NULL; 
+        this->addr_ptr = this->addr_ptr->ai_next) {
         try {
             SocketTCP aBlSocket;
-            aBlSocket.bindTCP(addr_ptr->ai_addr, addr_ptr->ai_addrlen);
+            aBlSocket.bindTCP(this->addr_ptr->ai_addr, this->addr_ptr->ai_addrlen);
             aBlSocket.listenTCP(LISTEN_SOCKETS);
             this->blSocket = std::move(aBlSocket);
             break;
@@ -36,7 +36,7 @@ ServerManager::ServerManager(const char *aServicename) :
         }
     }
     
-    if (addr_ptr == NULL){
+    if (this->addr_ptr == NULL){
         freeaddrinfo(this->results);
         throw AppError("Error: fallo al levantar servidor en bind");
     }
@@ -44,5 +44,17 @@ ServerManager::ServerManager(const char *aServicename) :
 
 ServerManager::~ServerManager() {
     freeaddrinfo(results);
+
+    if (!this->closed) {
+        this->blSocket.shutdownTCP(SHUT_RDWR);
+    }
+}
+
+SocketTCP ServerManager::connect() {
+    return std::move(this->blSocket.acceptTCP(this->addr_ptr->ai_addr, &this->addr_ptr->ai_addrlen));
+ }
+
+void ServerManager::closeSocket() {
     this->blSocket.shutdownTCP(SHUT_RDWR);
+    this->closed = true;
 }
