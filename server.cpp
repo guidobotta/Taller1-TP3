@@ -1,9 +1,9 @@
-#include "server_file_reader.h"
 #include "common_app_error.h"
-#include "server_round_list.h"
+#include "server_file_reader.h"
 #include "server_manager.h"
-#include "server_threads_manager.h"
+#include "server_round_list.h"
 #include "server_score.h"
+#include "server_threads_manager.h"
 #include <iostream>
 #include <exception>
 #include <string>
@@ -25,8 +25,7 @@ int main(int argc, char const *argv[]) {
         ServerManager serverManager(argv[1]); //levanto servidor
 
         //pongo hilos a correr
-        ThreadsManager threadsManager(serverManager, roundList, score);
-        std::thread manThread ( ThreadsManager::run, threadsManager );
+        ThreadsManager threadsManager(serverManager, score, roundList);
 
         //espero a que me manden una 'q'
         std::string line;
@@ -37,7 +36,7 @@ int main(int argc, char const *argv[]) {
 
         //cierro hilos
         threadsManager.close();
-        manThread.join();
+        threadsManager.join();
 
         return SUCCESS;
     } catch(const std::exception& e) {

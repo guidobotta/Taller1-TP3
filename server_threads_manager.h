@@ -5,23 +5,24 @@
 #include "server_client.h"
 #include "server_round_list.h"
 #include "server_score.h"
+#include "server_thread.h"
 #include <vector>
 #include <thread>
 
-class ThreadsManager {
+class ThreadsManager : public ServerThread {
     private:
         ServerManager &serverManager;
-        RoundList &roundList;
         ServerScore &score;
+        RoundList &roundList;
         bool ended;
         std::vector <std::thread> serverClients;
 
     public:
-        ThreadsManager(ServerManager &aServerManager, RoundList &aRoundList,
-                        ServerScore &aScore);
+        ThreadsManager(ServerManager &aServerManager, ServerScore &aScore,
+                        RoundList &aRoundList);
         ThreadsManager(const ThreadsManager &other) = delete;
         ~ThreadsManager();
-        static void run(ThreadsManager a);
+        virtual void run() override;
         void close();
 };
 

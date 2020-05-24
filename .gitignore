@@ -5,3 +5,5 @@ prueba.cpp
 a.out
 server
 .vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json

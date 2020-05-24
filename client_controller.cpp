@@ -8,13 +8,11 @@
 #define SUCCESS 0
 
 int ClientController::checkLine(std::string &line) {
-    char err[] = "Error: comando invalido. Escriba AYUDA para obtener ayuda";
-
     if ((line == "AYUDA") || (line == "RENDIRSE")) {
         return SUCCESS;
     }
 
-    for (int i = 0; i < line.size(); i++) {
+    for (std::size_t i = 0; i < line.size(); i++) {
         if (!std::isdigit(line[i])) {
             return ERROR;
         }

@@ -2,44 +2,22 @@
 #define __SERVER_CLIENT_H__
 
 #include "common_socket.h"
+#include "server_score.h"
 
 class ServerClient {
     private:
         SocketTCP &peer;
         uint16_t number;
+        ServerScore &score;
         bool ended;
+        int attempts;
+        void checkNumber(uint16_t n, uint16_t m, std::string &msg, bool *win);
+        bool digitRepeated(uint16_t n);
 
     public:
-        ServerClient(SocketTCP &aPeer, uint16_t aNumber);
+        ServerClient(SocketTCP &aPeer, uint16_t aNumber, ServerScore &aScore);
         ~ServerClient();
         void operator()();
 };
-
-ServerClient::ServerClient(SocketTCP &aPeer, uint16_t aNumber) : peer(aPeer),
-                                                            number(aNumber),
-                                                            ended(false) {}
-
-ServerClient::~ServerClient() {
-    this->peer.shutdownTCP(SHUT_RDWR);
-}
-
-void ServerClient::operator()() {
-    //rcv
-    char op[1] = {0};
-    this->peer.receiveTCP(op, 1, 0);
-
-    if (op[0] == 'h') {
-        //AYUDA
-    } else if (op[0] == 's') {
-        //EL WEON SE RINDIO JAJA
-    } else {
-        char num[2];
-        this->peer.receiveTCP(num, 2, 0);
-        //logica
-    }
-
-    //send len
-    //send word
-}
 
 #endif
