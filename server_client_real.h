@@ -7,7 +7,7 @@
 
 class _ServerClient : public ServerThread {
     private:
-        SocketTCP &peer;
+        SocketTCP peer;
         uint16_t number;
         ServerScore &score;
         bool dead;
@@ -16,7 +16,7 @@ class _ServerClient : public ServerThread {
         bool digitRepeated(uint16_t n);
 
     public:
-        _ServerClient(SocketTCP &aPeer, uint16_t aNumber, ServerScore &aScore);
+        _ServerClient(SocketTCP &&aPeer, uint16_t aNumber, ServerScore &aScore);
         ~_ServerClient();
         void run();
         bool isDead();

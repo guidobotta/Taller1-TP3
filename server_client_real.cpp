@@ -4,8 +4,8 @@
 
 #define ATTEMPTS 10
 
-_ServerClient::_ServerClient(SocketTCP &aPeer, uint16_t aNumber, 
-                            ServerScore &aScore) : peer(aPeer), 
+_ServerClient::_ServerClient(SocketTCP &&aPeer, uint16_t aNumber, 
+                            ServerScore &aScore) : peer(std::move(aPeer)), 
                                                     number(aNumber),
                                                     score(aScore),
                                                     dead(false),

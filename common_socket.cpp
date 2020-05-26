@@ -85,7 +85,7 @@ size_t SocketTCP::sendTCP(const char *buffer, size_t length, int flags) {
 size_t SocketTCP::receiveTCP(char *buffer, size_t length, int flags) {
     size_t bytes_recv = 0;
     ssize_t status = 1;
-    
+
     while ((bytes_recv < length) && (status != 0)){
         status = recv(this->socketTCP, &(buffer[bytes_recv]), length, flags);
         

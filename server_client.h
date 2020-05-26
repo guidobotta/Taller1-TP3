@@ -8,7 +8,7 @@ class ServerClient {
         _ServerClient* sc;
 
     public:
-        ServerClient(SocketTCP &aPeer, uint16_t aNumber, ServerScore &aScore);
+        ServerClient(SocketTCP &&aPeer, uint16_t aNumber, ServerScore &aScore);
         ~ServerClient();
         void start();
         ServerClient(ServerClient&& other);

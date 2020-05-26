@@ -14,10 +14,8 @@ ThreadsManager::~ThreadsManager() {
 
 void ThreadsManager::run() {
     try {
-        SocketTCP peer;
         while (!this->ended) {
-            peer = this->serverManager.accept();
-            this->serverClients.push_back(std::move(ServerClient(peer, this->roundList.getNext(), this->score)));
+            this->serverClients.push_back(std::move(ServerClient(SocketTCP(this->serverManager.accept()), this->roundList.getNext(), this->score)));
             this->serverClients.back().start();
             for (size_t i = 0; i < this->serverClients.size(); i++) {
                 if (this->serverClients.back().isDead()) {
