@@ -6,10 +6,10 @@ ThreadsManager::ThreadsManager(ServerManager &aServerManager,
                                 roundList(aRoundList), ended(false) {}
 
 ThreadsManager::~ThreadsManager() {
-    /*
-    for hilo in listadehilos
-        joinear
-    */
+    while (!this->serverClients.empty()) {
+        this->serverClients.back().join();
+        this->serverClients.pop_back();
+    }
 }
 
 void ThreadsManager::run() {
@@ -19,13 +19,19 @@ void ThreadsManager::run() {
             peer = this->serverManager.accept();
             this->serverClients.push_back(std::move(ServerClient(peer, this->roundList.getNext(), this->score)));
             this->serverClients.back().start();
+            for (size_t i = 0; i < this->serverClients.size(); i++) {
+                if (this->serverClients.back().isDead()) {
+                    this->serverClients.back().join();
+                    this->serverClients.pop_back();
+                    i--;
+                }
+            }
         }
     } catch(const std::exception& e) {
-        /*
-        for hilo in listadehilos
-            chequear y joinear
-        */
-        /*std::cerr << e.what() << '\n';*/
+        while (!this->serverClients.empty()) {
+            this->serverClients.back().join();
+            this->serverClients.pop_back();
+        }
     }
 }
 

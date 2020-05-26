@@ -8,7 +8,7 @@ _ServerClient::_ServerClient(SocketTCP &aPeer, uint16_t aNumber,
                             ServerScore &aScore) : peer(aPeer), 
                                                     number(aNumber),
                                                     score(aScore),
-                                                    ended(false),
+                                                    dead(false),
                                                     attempts(ATTEMPTS) {}
 
 _ServerClient::~_ServerClient() {}
@@ -54,6 +54,9 @@ void _ServerClient::checkNumber(uint16_t n, uint16_t m, std::string &msg, bool *
             if (good) {
                 msg += std::to_string(good);
                 msg += " bien";
+                if (reg) {
+                    msg += ", ";
+                }
             }
             if (reg) {
                 msg += std::to_string(reg);
@@ -64,7 +67,7 @@ void _ServerClient::checkNumber(uint16_t n, uint16_t m, std::string &msg, bool *
 }
 
 void _ServerClient::run() {
-    while (!this->ended) {
+    while (!this->dead) {
         std::string msg = "";
         char op[1] = {0};
         this->peer.receiveTCP(op, 1, 0);
@@ -76,7 +79,7 @@ void _ServerClient::run() {
             msg += "XXX: Número de 3 cifras a ser enviado al servidor para"; 
             msg += "adivinar el número secreto.";
         } else if (op[0] == 's') {
-            this->ended = true;
+            this->dead = true;
             this->score.addLooser();
             msg += "Perdiste";
         } else if (op[0] == 'n') {
@@ -91,14 +94,14 @@ void _ServerClient::run() {
             this->checkNumber(userNum, this->number, msg, &win);
 
             if (win) {
-                this->ended = true;
+                this->dead = true;
                 this->score.addWinner();
             } else {
                 this->attempts--;
                 if (!this->attempts) {
                     msg = "Perdiste";
                     this->score.addLooser();
-                    this->ended = true;
+                    this->dead = true;
                 }
             }
         } else { //cambiar
@@ -110,4 +113,8 @@ void _ServerClient::run() {
         this->peer.sendTCP(msg.c_str(), msg.size(), 0);
     }
     this->peer.shutdownTCP(SHUT_RDWR);
+}
+
+bool _ServerClient::isDead() {
+    return this->dead;
 }

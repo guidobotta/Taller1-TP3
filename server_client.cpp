@@ -33,3 +33,15 @@ ServerClient& ServerClient::operator=(ServerClient&& other) {
 
     return *this;
 }
+
+void ServerClient::join() {
+    this->sc->join();
+}
+
+bool ServerClient::isDead() {
+    return this->sc->isDead();
+}
+
+bool ServerClient::operator==(const ServerClient &other) {
+    return this->sc == other.sc;
+}

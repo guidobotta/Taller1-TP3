@@ -13,8 +13,8 @@ void ServerScore::addLooser() {
 }
 
 std::string ServerScore::getResult() {
-    std::string s = "Estadísticas:\n\tGanadores:  " + this->winners;
-    s += "\n\tPerdedores: " + this->loosers + '\n';
+    std::string s = "Estadísticas:\n\tGanadores:  " + std::to_string(this->winners);
+    s += "\n\tPerdedores: " + std::to_string(this->loosers) + '\n';
 
     return std::move(s);
 }

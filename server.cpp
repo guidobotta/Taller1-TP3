@@ -39,6 +39,8 @@ int main(int argc, char const *argv[]) {
         threadsManager.close();
         threadsManager.join();
 
+        std::cout << score.getResult();
+
         return SUCCESS;
     } catch(const std::exception& e) {
         std::cout << e.what() << '\n';

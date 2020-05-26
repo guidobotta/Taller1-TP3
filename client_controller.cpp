@@ -51,13 +51,10 @@ void ClientController::sendLine(std::string &line) {
 void ClientController::receiveResult(char** result) {
     char tamBytes[UINT32_SIZE];
     this->connector.rcvMsg(tamBytes, UINT32_SIZE);
-    
-    std::stringstream strTam;
-    strTam << tamBytes;
-    
-    uint32_t tam;
-    strTam >> tam;
-    tam = ntohs(tam);
+
+    uint32_t tam = (tamBytes[3] << 24) + (tamBytes[2] << 16) + (tamBytes[1] << 8) + tamBytes[0];
+
+    tam = ntohl(tam);
     
     char *msg = (char*) malloc((tam + 1) * sizeof(char));
     this->connector.rcvMsg(msg, tam);
@@ -79,7 +76,7 @@ void ClientController::run() {
     
     if (this->checkLine(line) == ERROR) {
         char e[] = "Error: comando invalido. Escriba AYUDA para obtener ayuda";
-        std::cout << e;
+        std::cout << e << std::endl;
         return;
     }
 
@@ -88,7 +85,11 @@ void ClientController::run() {
     char* result;
     this->receiveResult(&result);
 
-    std::cout << result;
+    if ((!strcmp(result, "Ganaste")) || (!strcmp(result, "Perdiste"))) {
+        this->ended = true;
+    }
+
+    std::cout << result << std::endl;
     free(result);
     /*CAMBIAR IMPLEMENTACION DAR ORIENTACION A OBJETOS ENCAPSULAR FREE*/
 }

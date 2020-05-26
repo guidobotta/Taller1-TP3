@@ -10,7 +10,7 @@ class _ServerClient : public ServerThread {
         SocketTCP &peer;
         uint16_t number;
         ServerScore &score;
-        bool ended;
+        bool dead;
         int attempts;
         void checkNumber(uint16_t n, uint16_t m, std::string &msg, bool *win);
         bool digitRepeated(uint16_t n);
@@ -19,6 +19,7 @@ class _ServerClient : public ServerThread {
         _ServerClient(SocketTCP &aPeer, uint16_t aNumber, ServerScore &aScore);
         ~_ServerClient();
         void run();
+        bool isDead();
 };
 
 #endif

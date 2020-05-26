@@ -13,6 +13,9 @@ class ServerClient {
         void start();
         ServerClient(ServerClient&& other);
         ServerClient& operator=(ServerClient&& other);
+        bool operator==(const ServerClient &other);
+        void join();
+        bool isDead();
 };
 
 #endif
