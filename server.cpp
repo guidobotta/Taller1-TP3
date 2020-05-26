@@ -26,6 +26,7 @@ int main(int argc, char const *argv[]) {
 
         //pongo hilos a correr
         ThreadsManager threadsManager(serverManager, score, roundList);
+        threadsManager.start();
 
         //espero a que me manden una 'q'
         std::string line;

@@ -23,7 +23,7 @@ class ServerManager {
     public:
         explicit ServerManager(const char *aServicename);
         ~ServerManager();
-        SocketTCP connect();
+        SocketTCP accept();
         void closeSocket();
 };
 

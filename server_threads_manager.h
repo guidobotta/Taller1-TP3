@@ -15,7 +15,7 @@ class ThreadsManager : public ServerThread {
         ServerScore &score;
         RoundList &roundList;
         bool ended;
-        std::vector <std::thread> serverClients;
+        std::vector <ServerClient> serverClients;
 
     public:
         ThreadsManager(ServerManager &aServerManager, ServerScore &aScore,

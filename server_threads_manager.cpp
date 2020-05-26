@@ -13,13 +13,19 @@ ThreadsManager::~ThreadsManager() {
 }
 
 void ThreadsManager::run() {
-    while (!this->ended) {
-        SocketTCP peer = std::move(this->serverManager.connect());
-        this->serverClients.push_back(std::thread { ServerClient(peer, this->roundList.getNext(), this->score) });
+    try {
+        SocketTCP peer;
+        while (!this->ended) {
+            peer = this->serverManager.accept();
+            this->serverClients.push_back(std::move(ServerClient(peer, this->roundList.getNext(), this->score)));
+            this->serverClients.back().start();
+        }
+    } catch(const std::exception& e) {
         /*
         for hilo in listadehilos
             chequear y joinear
         */
+        /*std::cerr << e.what() << '\n';*/
     }
 }
 

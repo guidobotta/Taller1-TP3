@@ -50,7 +50,7 @@ ServerManager::~ServerManager() {
     }
 }
 
-SocketTCP ServerManager::connect() {
+SocketTCP ServerManager::accept() {
     return std::move(this->blSocket.acceptTCP(this->addr_ptr->ai_addr, &this->addr_ptr->ai_addrlen));
  }
 
