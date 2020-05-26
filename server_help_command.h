@@ -4,10 +4,8 @@
 #include "server_command.h"
 
 class HelpCommand : public Command {
-    private:
-
     public:
-        HelpCommand(SocketTCP &aPeer);
+        explicit HelpCommand(SocketTCP &aPeer);
         ~HelpCommand();
         virtual void operator()() override;
 };

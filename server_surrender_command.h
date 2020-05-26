@@ -4,10 +4,8 @@
 #include "server_command.h"
 
 class SurrenderCommand : public Command {
-    private:
-
     public:
-        SurrenderCommand(SocketTCP &aPeer);
+        explicit SurrenderCommand(SocketTCP &aPeer);
         ~SurrenderCommand();
         virtual void operator()() override;
 };

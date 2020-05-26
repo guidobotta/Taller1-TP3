@@ -43,10 +43,10 @@ int main(int argc, char const *argv[]) {
 
         return SUCCESS;
     } catch(const std::exception& e) {
-        std::cout << e.what() << '\n';
+        std::cerr << e.what() << '\n';
         return ERROR;
     } catch(...) {
-        std::cout << "Error: Unknown" << '\n';
+        std::cerr << "Error: Unknown" << '\n';
         return ERROR;
     }
 }

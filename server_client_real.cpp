@@ -6,6 +6,8 @@
 #include <sstream>
 #include <utility>
 #include <string>
+#include <iostream>
+#include <exception>
 
 #define ATTEMPTS 10
 
@@ -19,33 +21,37 @@ _ServerClient::_ServerClient(SocketTCP &&aPeer, uint16_t aNumber,
 _ServerClient::~_ServerClient() {}
 
 void _ServerClient::run() {
-    while (!this->dead) {
-        char op[1] = {0};
-        this->peer.receiveTCP(op, 1, 0);
+    try {
+        while (!this->dead) {
+            char op[1] = {0};
+            this->peer.receiveTCP(op, 1, 0);
 
-        if (op[0] == 'h') {
-            HelpCommand hc(this->peer);
-            hc();
-        } else if (op[0] == 's') {
-            SurrenderCommand sc(this->peer);
-            sc();
-            this->dead = true;
-            this->score.addLooser();
-        } else if (op[0] == 'n') {
-            bool win = false;
-            NumberCommand nc(this->peer, win, this->attempts, this->number);
-            nc();
-
-            if (win) {
+            if (op[0] == 'h') {
+                HelpCommand hc(this->peer);
+                hc();
+            } else if (op[0] == 's') {
+                SurrenderCommand sc(this->peer);
+                sc();
                 this->dead = true;
-                this->score.addWinner();
-            } else if (!this->attempts) {
                 this->score.addLooser();
-                this->dead = true;
+            } else if (op[0] == 'n') {
+                bool win = false;
+                NumberCommand nc(this->peer, win, this->attempts, this->number);
+                nc();
+
+                if (win) {
+                    this->dead = true;
+                    this->score.addWinner();
+                } else if (!this->attempts) {
+                    this->score.addLooser();
+                    this->dead = true;
+                }
             }
         }
+        this->peer.shutdownTCP(SHUT_RDWR);
+    } catch(const std::exception& e) {
+        std::cerr << e.what() << '\n';
     }
-    this->peer.shutdownTCP(SHUT_RDWR);
 }
 
 bool _ServerClient::isDead() {
