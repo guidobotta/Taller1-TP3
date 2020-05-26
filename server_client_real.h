@@ -4,6 +4,7 @@
 #include "common_socket.h"
 #include "server_score.h"
 #include "server_thread.h"
+#include <string>
 
 class _ServerClient : public ServerThread {
     private:

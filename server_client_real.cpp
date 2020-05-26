@@ -1,6 +1,8 @@
 #include "server_client_real.h"
 #include <arpa/inet.h>
 #include <sstream>
+#include <utility>
+#include <string>
 
 #define ATTEMPTS 10
 
@@ -23,7 +25,8 @@ bool _ServerClient::digitRepeated(uint16_t n) {
     return false;
 }
 
-void _ServerClient::checkNumber(uint16_t n, uint16_t m, std::string &msg, bool *win) {
+void _ServerClient::checkNumber(uint16_t n, uint16_t m, std::string &msg, 
+                                bool *win) {
     if (n == m) {
         msg += "Ganaste";
         *win = true;
@@ -74,10 +77,10 @@ void _ServerClient::run() {
 
         if (op[0] == 'h') {
             msg += "Comandos válidos:\n\t";
-            msg += "AYUDA: despliega la lista de comando válidos\n\t";
+            msg += "AYUDA: despliega la lista de comandos válidos\n\t";
             msg += "RENDIRSE: pierde el juego automáticamente\n\t";
-            msg += "XXX: Número de 3 cifras a ser enviado al servidor para"; 
-            msg += "adivinar el número secreto.";
+            msg += "XXX: Número de 3 cifras a ser enviado al servidor para "; 
+            msg += "adivinar el número secreto";
         } else if (op[0] == 's') {
             this->dead = true;
             this->score.addLooser();

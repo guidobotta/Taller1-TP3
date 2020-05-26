@@ -5,10 +5,6 @@
 #define ERROR 1
 #define SUCCESS 0
 
-/*
- * Se debe ejecutar como
- * $./client <hostname> <servicename>
-*/
 int main(int argc, char const *argv[]) {
     try {
         if (argc != 3) {

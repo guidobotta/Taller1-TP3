@@ -1,4 +1,5 @@
 #include "server_threads_manager.h"
+#include <utility>
 
 ThreadsManager::ThreadsManager(ServerManager &aServerManager, 
                                 ServerScore &aScore, RoundList &aRoundList) : 
@@ -15,7 +16,10 @@ ThreadsManager::~ThreadsManager() {
 void ThreadsManager::run() {
     try {
         while (!this->ended) {
-            this->serverClients.push_back(std::move(ServerClient(SocketTCP(this->serverManager.accept()), this->roundList.getNext(), this->score)));
+            this->serverClients.push_back(std::move(ServerClient(
+                                    SocketTCP(this->serverManager.accept()), 
+                                    this->roundList.getNext(), this->score))
+                                    );
             this->serverClients.back().start();
             for (size_t i = 0; i < this->serverClients.size(); i++) {
                 if (this->serverClients.back().isDead()) {

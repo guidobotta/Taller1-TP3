@@ -5,6 +5,7 @@
 #include <netdb.h>
 #include <string.h>
 #include <iostream>
+#include <utility>
 
 ServerManager::ServerManager(const char *aServicename) : 
                                                     servicename(aServicename),
@@ -27,7 +28,8 @@ ServerManager::ServerManager(const char *aServicename) :
         this->addr_ptr = this->addr_ptr->ai_next) {
         try {
             SocketTCP aBlSocket;
-            aBlSocket.bindTCP(this->addr_ptr->ai_addr, this->addr_ptr->ai_addrlen);
+            aBlSocket.bindTCP(this->addr_ptr->ai_addr, 
+                              this->addr_ptr->ai_addrlen);
             aBlSocket.listenTCP(LISTEN_SOCKETS);
             this->blSocket = std::move(aBlSocket);
             break;
@@ -51,7 +53,8 @@ ServerManager::~ServerManager() {
 }
 
 SocketTCP ServerManager::accept() {
-    return std::move(this->blSocket.acceptTCP(this->addr_ptr->ai_addr, &this->addr_ptr->ai_addrlen));
+    return std::move(this->blSocket.acceptTCP(this->addr_ptr->ai_addr, 
+                                              &this->addr_ptr->ai_addrlen));
  }
 
 void ServerManager::closeSocket() {

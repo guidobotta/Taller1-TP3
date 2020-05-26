@@ -10,7 +10,7 @@ typedef int socket_t;
 class SocketTCP {
     private:
         socket_t socketTCP;
-        SocketTCP(socket_t &socket);
+        explicit SocketTCP(socket_t &socket);
 
     public:
         SocketTCP();

@@ -8,7 +8,7 @@ class ServerThread {
         std::thread thread;
  
     public:
-        ServerThread ();
+        ServerThread();
         void start();
         void join();
         virtual void run() = 0; 

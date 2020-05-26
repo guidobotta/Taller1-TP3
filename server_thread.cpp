@@ -1,6 +1,7 @@
 #include "server_thread.h"
+#include <utility>
 
-ServerThread::ServerThread () {}
+ServerThread::ServerThread() {}
 
 void ServerThread::start() {
     thread = std::thread(&ServerThread::run, this);

@@ -52,7 +52,8 @@ void ClientController::receiveResult(char** result) {
     char tamBytes[UINT32_SIZE];
     this->connector.rcvMsg(tamBytes, UINT32_SIZE);
 
-    uint32_t tam = (tamBytes[3] << 24) + (tamBytes[2] << 16) + (tamBytes[1] << 8) + tamBytes[0];
+    uint32_t tam = (tamBytes[3] << 24) + (tamBytes[2] << 16) + 
+                   (tamBytes[1] << 8) + tamBytes[0];
 
     tam = ntohl(tam);
     

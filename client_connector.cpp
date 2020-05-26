@@ -1,4 +1,5 @@
 #include "client_connector.h"
+#include <utility>
 
 ClientConnector::ClientConnector(const char *aHostname, 
                                 const char *aServicename) : hostname(aHostname),

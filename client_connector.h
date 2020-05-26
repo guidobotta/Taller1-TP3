@@ -21,7 +21,8 @@ class ClientConnector {
         SocketTCP clSocket;
 
     public:
-        explicit ClientConnector(const char *aHostname, const char *aServicename);
+        explicit ClientConnector(const char *aHostname, 
+                                const char *aServicename);
         ~ClientConnector();
         void sendMsg(char* msg, size_t n);
         void rcvMsg(char* msg, size_t n);
