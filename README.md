@@ -147,14 +147,66 @@ Error: comando inválido. Escriba AYUDA para obtener ayuda
 &nbsp;&nbsp;&nbsp;&nbsp; En principio, se lee el archivo y se chequea que sea correcto. Luego, se crea una lista circular. Para esto, se tienen las siguientes clases:
 
 - **FileReader**: clase que encapsula la apertura, lectura y clausura de archivos.
+
 - **RoundList**: clase lista circular que recibe un `FileReader` y lee el archivo, chequeando que sean correctos los números. Cuenta con una función getNext() que se encarga de devolverte un número y avanzar hacia el siguiente de forma circular.
 
 &nbsp;&nbsp;&nbsp;&nbsp; Luego, se levanta el servidor, para esto se encuentra la siguiente clase:
 
 - **ServerManager**: se encarga de levantar el servidor y de escuchar y aceptar clientes entrantes. Cuenta con un `SocketTCP bindAndListen`.
 
-&nbsp;&nbsp;&nbsp;&nbsp; A continuación, se crea el hilo que se encarga de la creación de los hilos que contienen la lógica y la comunicación con el cliente.
+&nbsp;&nbsp;&nbsp;&nbsp; A continuación, se crea el hilo que se encarga de la creación de los hilos que contienen la lógica y la comunicación con el cliente. Las clases que participan son:
 
-- **Server_Threads_Manager**: le pide a `ServerManager` que le devuelva un `socket peer`, cuando acepte un cliente, y se lo asigna a un hilo del tipo `ServerClient`, el cual contiene toda la lógica de ejecución.
+- **ThreadsManager**: se encarga de pedirle a `ServerManager` que le devuelva un `socket peer` cuando acepte un cliente, y se lo asigna a un hilo del tipo `ServerClient`, el cual contiene toda la lógica de ejecución.
+
+- **ServerClient** y **_ServerClient**: de utilizan dos clases para usar memoria dinámica de forma encapsulada. En `ServerClient` se crea una instancia en el heap de la clase `_ServerClient`, que contiene la lógica del juego y de la comunicación con el cliente.
+
+- **SurrenderCommand**, **HelpCommand** y **NumberCommand**: son tres clases, hijas de la clase `Command`, utilizadas para quitarle responsabilidad en la lógica al `ServerClient`. Se utilizan cada vez que el usuario envía un mensaje. `SurrenderCommand` si se rinde, `HelpCommand` si pide ayuda y `NumberCommand` si envía un número no signado de 2 bytes.
+
+&nbsp;&nbsp;&nbsp;&nbsp; Finalmente, se encuentra la clase **Score**, que lleva el conteo de los perdedores y ganadores.
+
+&nbsp;&nbsp;&nbsp;&nbsp; Sin entrar en detalles de implementación, el diagrama general del servidor quedaría de la siguiente manera.
+
+![server class](img/serverclass.jpg)
+
+&nbsp;&nbsp;&nbsp;&nbsp; El hilo `server`, que no es un objeto, se encarga de instanciar a `FileReader` y a `RoundList`, con lo que se chequea que el archivo sea correcto y se arma la lista. Luego instancia al `Score`, al `ServerManager`, quien levanta el servidor, y al `ThreadsManager`.
+
+&nbsp;&nbsp;&nbsp;&nbsp; El hilo de `ThreadsManager` se encarga de instanciar cada `ServerClient`, quienes se encargan de la comunicación con el cliente, la lógica del juego, para la cual necesitan de un número brindado por `RoundList`, y de actualizar el `Score`. Para esta lógica, usan el apoyo de las clases de tipo `Command`.
+
+## Dificultades en el Desarrollo
+
+- Se encontró una gran dificultad a la hora de crear un `socket peer` en el hilo `ThreadsManager` al querer utilizar asignación por movimiento, ya que al querer actualizar el valor de este al principio de cada ciclo, se invalidaba el valor del socket, rompiendo al socket del `ServerClient`. A continuación se muestra dónde estaba el problema:
+
+~~~c++
+void ThreadsManager::run() {
+    SocketTCP peer;
+        /*Ejecuto mientras el main no avise que mandaron una
+        'q' para cerrar el servidor.*/
+        while (!this->ended) { 
+            //Asignación por movimiento
+            peer = std::move(this->serverManager.connect());
+            this->serverClients.push_back(ServerClient(peer, ...));
+            (...)
+        }
+}
+~~~
+
+&nbsp;&nbsp;&nbsp;&nbsp; Como se puede observar, se actualizaba por asignación por movimiento al valor del peer en cada ciclo, lo cual invalidaba el valor que había adoptado en el ciclo anterior. Para solucionar, se decidió llamar al constructor por movimiento del SocketTCP como parámetro del constructor del ServerClient.
+
+~~~c++
+void ThreadsManager::run() {
+    while (!this->ended) {
+        this->serverClients.push_back(ServerClient(SocketTCP(this->serverManager.accept()), ...));
+        (...)
+    }
+}
+~~~
 
 # Conclusiones
+
+&nbsp;&nbsp;&nbsp;&nbsp; Como se pudo ver en la parte de `Dificultades en el Desarrollo`, hay que tener cuidado a la hora de trabajar con multiples clientes, ya que se puede facilmente cerrar la comunicación por error, o perder el valor de un socket y no poder recuperarlo.
+
+&nbsp;&nbsp;&nbsp;&nbsp; En este trabajo se utilizó el hilo "*extra*" para el manejo de los hilos de los clientes para poder facilitar el cierre del servidor cuando se desease y poder liberar los recursos de manera más ordenada.
+
+# Aclaración final para el corrector
+
+&nbsp;&nbsp;&nbsp;&nbsp; Fui informado en la corrección del TP2 que no es necesaria la clase FileReader ya que ifstream es RAII. Será modificada a lo largo de la semana.
