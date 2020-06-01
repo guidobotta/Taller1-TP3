@@ -39,7 +39,7 @@ SocketTCP& SocketTCP::operator=(SocketTCP&& other) {
 
 SocketTCP::~SocketTCP() {
     if (this->socketTCP != INVALID_SOCKET) {
-        close(this->socketTCP);
+        this->closeTCP();
     }
 }
 
@@ -110,5 +110,13 @@ size_t SocketTCP::receiveTCP(char *buffer, size_t length, int flags) {
 void SocketTCP::shutdownTCP(int how) {
     if (shutdown(this->socketTCP, how) == SOCKET_ERROR) {
         throw AppError("Error: socket fallo en shutdown");
+    }
+}
+
+void SocketTCP::closeTCP() {
+    if (this->socketTCP != INVALID_SOCKET) {
+        shutdown(this->socketTCP, SHUT_RDWR);
+        close(this->socketTCP);
+        this->socketTCP = -1;
     }
 }

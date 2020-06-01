@@ -12,7 +12,7 @@ class ClientController {
         bool ended;
         int checkLine(std::string &line);
         void sendLine(std::string &line);
-        void receiveResult(char** result);
+        std::string receiveResult();
 
     public:
         explicit ClientController(ClientConnector &aConnector);

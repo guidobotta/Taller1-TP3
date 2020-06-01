@@ -46,10 +46,6 @@ ServerManager::ServerManager(const char *aServicename) :
 
 ServerManager::~ServerManager() {
     freeaddrinfo(results);
-
-    if (!this->closed) {
-        this->blSocket.shutdownTCP(SHUT_RDWR);
-    }
 }
 
 SocketTCP ServerManager::accept() {
@@ -58,6 +54,6 @@ SocketTCP ServerManager::accept() {
  }
 
 void ServerManager::closeSocket() {
-    this->blSocket.shutdownTCP(SHUT_RDWR);
+    this->blSocket.closeTCP();
     this->closed = true;
 }

@@ -48,7 +48,6 @@ void _ServerClient::run() {
                 }
             }
         }
-        this->peer.shutdownTCP(SHUT_RDWR);
     } catch(const std::exception& e) {
         std::cerr << e.what() << '\n';
     }

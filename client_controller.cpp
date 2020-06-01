@@ -1,5 +1,6 @@
 #include "client_controller.h"
 #include <sstream>
+#include <utility>
 
 #define MAX_DIGITS_UINT16 5
 #define MAX_NUMB_UINT16 65535
@@ -48,7 +49,7 @@ void ClientController::sendLine(std::string &line) {
     }
 }
 
-void ClientController::receiveResult(char** result) {
+std::string ClientController::receiveResult() {
     char tamBytes[UINT32_SIZE];
     this->connector.rcvMsg(tamBytes, UINT32_SIZE);
 
@@ -57,13 +58,14 @@ void ClientController::receiveResult(char** result) {
 
     tam = ntohl(tam);
     
-    char *msg = (char*) malloc((tam + 1) * sizeof(char));
-    this->connector.rcvMsg(msg, tam);
-    msg[tam] = '\0';
+    char *buff = (char*) malloc((tam + 1) * sizeof(char));
+    this->connector.rcvMsg(buff, tam);
+    buff[tam] = '\0';
 
-    (*result) = msg;
-    /*CAMBIAR IMPLEMENTACION DAR ORIENTACION A OBJETOS ENCAPSULAR MALLOC*/
-    /*AGREGAR UN IF MSG == "PERDISTE" O "GANASTE" -> ENDED=TRUE*/
+    std::string msg(buff);
+    free(buff);
+
+    return std::move(msg);
 }
 
 ClientController::ClientController(ClientConnector &aConnector) : 
@@ -83,16 +85,13 @@ void ClientController::run() {
 
     this->sendLine(line);
     
-    char* result;
-    this->receiveResult(&result);
+    std::string result = this->receiveResult();
 
-    if ((!strcmp(result, "Ganaste")) || (!strcmp(result, "Perdiste"))) {
+    if ((result == "Ganaste") || (result == "Perdiste")) {
         this->ended = true;
     }
 
     std::cout << result << std::endl;
-    free(result);
-    /*CAMBIAR IMPLEMENTACION DAR ORIENTACION A OBJETOS ENCAPSULAR FREE*/
 }
 
 bool ClientController::end() {

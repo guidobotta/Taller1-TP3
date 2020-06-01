@@ -6,10 +6,12 @@ ServerScore::ServerScore() : winners(0), loosers(0) {}
 ServerScore::~ServerScore() {}
 
 void ServerScore::addWinner() {
+    std::unique_lock<std::mutex> lk(mux);
     this->winners++;
 }
 
 void ServerScore::addLooser() {
+    std::unique_lock<std::mutex> lk(mux);
     this->loosers++;
 }
 

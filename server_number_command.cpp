@@ -20,6 +20,40 @@ bool NumberCommand::digitRepeated(uint16_t n) {
     return false;
 }
 
+void NumberCommand::getHits(char &good, char &reg, std::string &att, 
+                                 std::string &real) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (att[i] == real[j]) {
+                if (i == j) {
+                    good++;
+                } else {
+                    reg++;
+                }
+                break;
+            }
+        }
+    }
+}
+
+void getHitsMsg(char &good, char &reg, std::string &msg) {
+    if ((!good) && (!reg)) {
+        msg += "3 mal";
+    } else {
+        if (good) {
+            msg += std::to_string(good);
+            msg += " bien";
+            if (reg) {
+                msg += ", ";
+            }
+        }
+        if (reg) {
+            msg += std::to_string(reg);
+            msg += " regular";
+        }
+    }
+}
+
 void NumberCommand::checkNumber(uint16_t n, std::string &msg) {
     if (n == this->realNumber) {
         msg += "Ganaste";
@@ -36,34 +70,8 @@ void NumberCommand::checkNumber(uint16_t n, std::string &msg) {
             char good = 0;
             char reg = 0;
 
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    if (att[i] == real[j]) {
-                        if (i == j) {
-                            good++;
-                        } else {
-                            reg++;
-                        }
-                        break;
-                    }
-                }
-            }
-
-            if ((!good) && (!reg)) {
-                msg += "3 mal";
-            } else {
-                if (good) {
-                    msg += std::to_string(good);
-                    msg += " bien";
-                    if (reg) {
-                        msg += ", ";
-                    }
-                }
-                if (reg) {
-                    msg += std::to_string(reg);
-                    msg += " regular";
-                }
-            }
+            getHits(good, reg, att, real);
+            getHitsMsg(good, reg, msg);
         }
     }
 }

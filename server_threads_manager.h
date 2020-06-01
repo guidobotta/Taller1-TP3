@@ -8,13 +8,14 @@
 #include "server_thread.h"
 #include <vector>
 #include <thread>
+#include <atomic>
 
 class ThreadsManager : public ServerThread {
     private:
         ServerManager &serverManager;
         ServerScore &score;
         RoundList &roundList;
-        bool ended;
+        std::atomic<bool> ended;
         std::vector <ServerClient> serverClients;
 
     public:

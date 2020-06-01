@@ -12,6 +12,8 @@ class NumberCommand : public Command {
         int realNumber;
         void checkNumber(uint16_t n, std::string &msg);
         bool digitRepeated(uint16_t n);
+        void getHits(char &good, char &reg, std::string &att, 
+                          std::string &real);
         
     public:
         NumberCommand(SocketTCP &aPeer, bool &aWin, int &att, int aNum);

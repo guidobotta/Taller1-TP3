@@ -40,9 +40,7 @@ ClientConnector::ClientConnector(const char *aHostname,
     freeaddrinfo(results);
 }
 
-ClientConnector::~ClientConnector() {
-    this->clSocket.shutdownTCP(SHUT_RDWR);
-}
+ClientConnector::~ClientConnector() {}
 
 void ClientConnector::sendMsg(char* msg, size_t n) {
     this->clSocket.sendTCP(msg, n, 0);

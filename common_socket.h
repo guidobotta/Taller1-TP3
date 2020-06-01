@@ -25,6 +25,7 @@ class SocketTCP {
         size_t sendTCP(const char *buffer, size_t length, int flags);
         size_t receiveTCP(char *buffer, size_t length, int flags);
         void shutdownTCP(int how);
+        void closeTCP();
 };
 
 #endif
