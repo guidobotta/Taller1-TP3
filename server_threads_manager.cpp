@@ -1,4 +1,5 @@
 #include "server_threads_manager.h"
+#include "server_protocol.h"
 #include <utility>
 
 ThreadsManager::ThreadsManager(ServerManager &aServerManager, 
@@ -17,8 +18,8 @@ void ThreadsManager::run() {
     try {
         while (!this->ended) {
             this->serverClients.push_back(std::move(ServerClient(
-                                    SocketTCP(this->serverManager.accept()), 
-                                    this->roundList.getNext(), this->score)));
+                    ServerProtocol(std::move(this->serverManager.accept())), 
+                    this->roundList.getNext(), this->score)));
             this->serverClients.back().start();
             for (size_t i = 0; i < this->serverClients.size(); i++) {
                 if (this->serverClients.back().isDead()) {

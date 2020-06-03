@@ -2,8 +2,8 @@
 #include <string>
 #include <arpa/inet.h>
 
-NumberCommand::NumberCommand(SocketTCP &aPeer, bool &aWin, int &att, int aNum) :
-                                                            Command(aPeer),
+NumberCommand::NumberCommand(ServerProtocol &sp, bool &aWin, int &att, int aNum)
+                                                            : Command(sp),
                                                             win(aWin),
                                                             attempts(att),
                                                             realNumber(aNum) {}
@@ -76,18 +76,11 @@ void NumberCommand::checkNumber(uint16_t n, std::string &msg) {
     }
 }
 
-void NumberCommand::operator()() {
-    char charNum[2];
-    this->peer.receiveTCP(charNum, 2, 0);
-    
-    uint16_t userNum = (charNum[1] << 8) + charNum[0];
-    userNum = ntohs(userNum);
+void NumberCommand::run() {
+    uint16_t userNum = this->sp.rcvNumber();
 
     std::string msg = "";
     this->checkNumber(userNum, msg);
 
-    uint32_t len = (uint32_t) msg.size();
-    len = htonl(len);
-    this->peer.sendTCP((char *) &len, 4, 0);
-    this->peer.sendTCP(msg.c_str(), msg.size(), 0);
+    this->sp.sendMsg(msg);
 }

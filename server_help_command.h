@@ -5,9 +5,9 @@
 
 class HelpCommand : public Command {
     public:
-        explicit HelpCommand(SocketTCP &aPeer);
-        ~HelpCommand();
-        virtual void operator()() override;
+        explicit HelpCommand(ServerProtocol &sp);
+        virtual ~HelpCommand();
+        virtual void run() override;
 };
 
 #endif

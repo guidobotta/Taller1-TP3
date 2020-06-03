@@ -11,41 +11,34 @@
 
 #define ATTEMPTS 10
 
-_ServerClient::_ServerClient(SocketTCP &&aPeer, uint16_t aNumber, 
-                            ServerScore &aScore) : peer(std::move(aPeer)), 
+_ServerClient::_ServerClient(ServerProtocol aSp, uint16_t aNumber, 
+                            ServerScore &aScore) : sp(std::move(aSp)), 
                                                     number(aNumber),
                                                     score(aScore),
                                                     dead(false),
-                                                    attempts(ATTEMPTS) {}
+                                                    attempts(ATTEMPTS),
+                                                    win(false) {}
 
 _ServerClient::~_ServerClient() {}
+
+#include "server_command_maker.h"
 
 void _ServerClient::run() {
     try {
         while (!this->dead) {
-            char op[1] = {0};
-            this->peer.receiveTCP(op, 1, 0);
+            char op = this->sp.rcvCommand();
 
-            if (op[0] == 'h') {
-                HelpCommand hc(this->peer);
-                hc();
-            } else if (op[0] == 's') {
-                SurrenderCommand sc(this->peer);
-                sc();
+            CommandMaker cmMaker(op, this->sp, this->win, 
+                                 this->attempts, this->number);
+            Command *cm = cmMaker.getCommand();
+            cm->run();
+
+            if (win) {
+                this->dead = true;
+                this->score.addWinner();
+            } else if (!this->attempts) {
                 this->dead = true;
                 this->score.addLooser();
-            } else if (op[0] == 'n') {
-                bool win = false;
-                NumberCommand nc(this->peer, win, this->attempts, this->number);
-                nc();
-
-                if (win) {
-                    this->dead = true;
-                    this->score.addWinner();
-                } else if (!this->attempts) {
-                    this->score.addLooser();
-                    this->dead = true;
-                }
             }
         }
     } catch(const std::exception& e) {

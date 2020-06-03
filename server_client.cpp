@@ -1,9 +1,9 @@
 #include "server_client.h"
 #include <utility>
 
-ServerClient::ServerClient(SocketTCP &&aPeer, uint16_t aNumber, 
+ServerClient::ServerClient(ServerProtocol sp, uint16_t aNumber, 
                             ServerScore &aScore) {
-    this->sc = new _ServerClient(std::move(aPeer), aNumber, aScore);
+    this->sc = new _ServerClient(std::move(sp), aNumber, aScore);
 }
 
 void ServerClient::start() {

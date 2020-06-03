@@ -1,16 +1,16 @@
 #ifndef __SERVER_COMMAND_H__
 #define __SERVER_COMMAND_H__
 
-#include "common_socket.h"
+#include "server_protocol.h"
 
 class Command {
     protected:
-        SocketTCP &peer;
+        ServerProtocol &sp;
 
     public:
-        explicit Command(SocketTCP &aPeer);
-        ~Command();
-        virtual void operator()() = 0;
+        explicit Command(ServerProtocol &asp);
+        virtual ~Command();
+        virtual void run() = 0;
 };
 
 #endif

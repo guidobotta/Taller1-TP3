@@ -16,9 +16,9 @@ class NumberCommand : public Command {
                           std::string &real);
         
     public:
-        NumberCommand(SocketTCP &aPeer, bool &aWin, int &att, int aNum);
-        ~NumberCommand();
-        virtual void operator()() override;
+        NumberCommand(ServerProtocol &sp, bool &aWin, int &att, int aNum);
+        virtual ~NumberCommand();
+        virtual void run() override;
 };
 
 #endif
