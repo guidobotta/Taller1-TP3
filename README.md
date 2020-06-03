@@ -207,6 +207,20 @@ void ThreadsManager::run() {
 
 &nbsp;&nbsp;&nbsp;&nbsp; En este trabajo se utilizó el hilo "*extra*" para el manejo de los hilos de los clientes para poder facilitar el cierre del servidor cuando se desease y poder liberar los recursos de manera más ordenada.
 
-# Aclaración final para el corrector
+# Apéndice
 
-&nbsp;&nbsp;&nbsp;&nbsp; Fui informado en la corrección del TP2 que no es necesaria la clase FileReader ya que ifstream es RAII. Será modificada a lo largo de la semana.
+## Correcciones
+
+- **SocketTCP**: Hago shutdown y close en el destructor para que los objetos no deban preocuparse de cerrarlo. También se añadió una clase pública close para el caso que se necesite cerrarlo con anterioridad, se tuvo cuidado de no poder cerrarlo más de una vez. Esto se usó para el manejo de la excepción cuando se desea cerrar el servidor.
+
+- **ServerScore**: Agrego `mutex` para no tener `race condition` al agregar `Winners` o `Loosers`.
+
+- **ServerThreadsManager**: Cambio `bool ended` por `std::atomic<bool> ended` para no tener problemas al querer finalizar la ejecución del servidor, donde tengo que cambiar el estado de este mismo en el hilo del cliente.
+
+- **ServerThreadsManager**, **ServerClient** y **ServerProtocol**: Se agregó un `ServerProtocol` para manejar `send` y `recieve` por lado del `ServerClient`. Esto cambio la creación del `ServerClient` dentro del `ServerThreadsManager`.
+
+- **Command**, **HelpCommand**, **SurrenderCommand**, **NumberCommand** y **CommandMaker**: Se creó un `CommandMaker` encargado de analizar qué comando se debe crear según el char de operacióne enviado por el cliente. Se uso el patrón Factory para esto. Se instancia un `CommandMaker`, pasandole el char de operación. Este hace un new del comando a utilizar. Luego, se hace un `Command *cm = cmMaker.getCommand();` y se ejecuta `cm->run();`. Así, se logra un polimorfismo sin que el `ServerClient` sepa la existencia de distintos comandos.
+
+- **NumberCommand**: Se modularizó la función para chequear el número.
+
+- **ClientController**: Se cambió un poco la funcionalidad utilizando desde antes strings.
