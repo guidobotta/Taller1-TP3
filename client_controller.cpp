@@ -78,7 +78,7 @@ void ClientController::run() {
     getline(std::cin, line);
     
     if (this->checkLine(line) == ERROR) {
-        char e[] = "Error: comando invalido. Escriba AYUDA para obtener ayuda";
+        char e[] = "Error: comando inválido. Escriba AYUDA para obtener ayuda";
         std::cout << e << std::endl;
         return;
     }
